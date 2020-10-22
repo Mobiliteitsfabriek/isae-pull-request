@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+command="docker-compose run --rm isae-pr-review"
+
+if [[ $1 ]]; then
+  case $1 in
+    "--help")
+      echo "This command installs dependencies and compiles the code for the action";
+      exit 0;
+    ;;
+  esac
+
+  echo "Unknown option";
+  exit 1;
+fi
+
+$command npm install
+$command npm run prepare
+git add dist

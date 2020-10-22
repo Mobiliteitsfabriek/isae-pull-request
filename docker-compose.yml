@@ -1,0 +1,19 @@
+version: "3.5"
+
+services:
+  isae-pr-review:
+    container_name: isae-pr-review
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        CTN_UID: ${CTN_UID:-0}
+        CTN_GID: ${CTN_GID:-0}
+        CTN_USR: node
+        CTN_GRP: node
+        CTN_HOME: /home/node
+    command: "npm install"
+    working_dir: "/app"
+    volumes:
+      - "./:/app"
+    user: "node:node"
