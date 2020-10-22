@@ -35,7 +35,10 @@ async function run() {
         }
 
         const reviews = await octokit.pulls.listReviews(octokitPullsPayload);
-        const reviewExists = reviews.data.any(review => review.user.login === 'github-actions[bot]');
+        let reviewExists = false;
+        for (const review of reviews.data) {
+            reviewExists = reviewExists || review.user.login === 'github-actions[bot]';
+        }
 
         if (errors.length > 0) {
             if (false === reviewExists) {
