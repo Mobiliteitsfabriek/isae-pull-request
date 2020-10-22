@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Pull Request Linter
         # Alternatively instead of a tag, you can use a branch name
-        uses: Mobiliteitsfabriek/isae-pull-request@20201022.1230
+        uses: Mobiliteitsfabriek/isae-pull-request@v1
         with:
           # Github token with access to the repository (secrets.GITHUB_TOKEN).
           repo-token: ${{ secrets.GITHUB_TOKEN }}
