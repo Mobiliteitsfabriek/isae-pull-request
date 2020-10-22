@@ -57,11 +57,13 @@ async function run() {
         } else {
             if (reviewExists) {
                 for (const review of reviews.data) {
-                    await octokit.pulls.dismissReview({
-                        ...octokitPullsPayload,
-                        review_id: review.id,
-                        message: 'PR title & branch is now ISAE compliant!'
-                    });
+                    if (review.state !== 'DISMISSED') {
+                        await octokit.pulls.dismissReview({
+                            ...octokitPullsPayload,
+                            review_id: review.id,
+                            message: 'PR title & branch is now ISAE compliant!'
+                        });
+                    }
                 }
             }
         }
