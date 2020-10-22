@@ -3,3 +3,8 @@ description: 'Review if PR adheres to ISAE standards'
 runs:
   using: 'node12'
   main: 'dist/index.js'
+inputs:
+  repo-token:
+    description:
+      "Github token with access to the repository (secrets.GITHUB_TOKEN)."
+    required: true
