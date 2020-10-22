@@ -27,18 +27,18 @@ async function run() {
             errors.push('* Branch name does not seem to contain reference to JIRA ticket (expected ^[^/]+/(MOFAB|IO)-\d+-.*$)');
         }
 
-        const reviews = octokit.pulls.listReviews(octokitPullsPayload);
+        const reviews = await octokit.pulls.listReviews(octokitPullsPayload);
         const reviewExists = reviews.data.any(review => review.user.login === 'github-actions[bot]');
 
         if (errors.length > 0) {
             if (false === reviewExists) {
-                octokit.pulls.createReview({
+                await octokit.pulls.createReview({
                     ...octokitPullsPayload,
                     body: errors.join('\n'),
                     event: 'REQUEST_CHANGES'
                 });
             } else {
-                octokit.pulls.createReview({
+                await octokit.pulls.createReview({
                     ...octokitPullsPayload,
                     body: errors.join('\n'),
                     event: 'COMMENT'
@@ -47,7 +47,7 @@ async function run() {
         } else {
             if (reviewExists) {
                 for (const review of reviews.data) {
-                    octokit.pulls.dismissReview({
+                    await octokit.pulls.dismissReview({
                         ...octokitPullsPayload,
                         review_id: review.id,
                         message: 'PR title & branch is now ISAE compliant!'
