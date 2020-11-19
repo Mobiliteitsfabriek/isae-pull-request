@@ -38,10 +38,22 @@ jobs:
     steps:
       - name: Pull Request Linter
         # Alternatively instead of a tag, you can use a branch name
-        uses: Mobiliteitsfabriek/isae-pull-request@v1.0.0
+        uses: Mobiliteitsfabriek/isae-pull-request@v1.1.0
         with:
-          # Github token with access to the repository (secrets.GITHUB_TOKEN).
+          # Github token with access to the repository (secrets.GITHUB_TOKEN). Always required
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable validation that ticket in title must match ticket in branch.
+          title-must-match-branch: "true"
+          # Enable validation that tickets found must exist in JIRA.
+          validate-with-jira: "true"
+          # Enable validation that tickets found in JIRA must not have status category "done". Requires validate-with-jira.
+          validate-jira-status-not-done: "true"
+          # Base URL of the JIRA environment. Required if validate-with-jira is enabled.
+          jira-url: mobiliteitsfabriek.atlassian.net
+          # Authentication email address. Required if validate-with-jira is enabled.
+          jira-auth-email: ian.zunderdorp@mobiliteitsfabriek.nl
+          # Authentication API token of above email address. Required if validate-with-jira is enabled. Use secret!
+          jira-auth-token: ${{ secrets.JIRA_AUTH_TOKEN_IANZ }}
 ```
 
 ## Deploying changes to this action
