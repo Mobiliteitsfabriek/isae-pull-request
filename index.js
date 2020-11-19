@@ -34,13 +34,16 @@ async function run() {
         }
 
         if (errors.length > 0) {
+            core.info('Validation failed');
             if (false === reviewExists) {
+                core.info('Creating new review to request changes');
                 await octokit.pulls.createReview({
                     ...octokitPullsPayload,
                     body: errors.join('\n'),
                     event: 'REQUEST_CHANGES'
                 });
             } else {
+                core.info('Creating new comment to keep requesting changes');
                 await octokit.pulls.createReview({
                     ...octokitPullsPayload,
                     body: errors.join('\n'),
@@ -48,9 +51,12 @@ async function run() {
                 });
             }
         } else {
+            core.info('Validation succeeded');
+
             if (reviewExists) {
                 for (const review of reviews.data) {
-                    if (review.state !== 'DISMISSED') {
+                    if (review.state !== 'DISMISSED' && review.user.login === 'github-actions[bot]') {
+                        core.info('Dismissing own review');
                         await octokit.pulls.dismissReview({
                             ...octokitPullsPayload,
                             review_id: review.id,
@@ -60,7 +66,6 @@ async function run() {
                 }
             }
         }
-
     } catch (error) {
         core.setFailed(error.message);
     }

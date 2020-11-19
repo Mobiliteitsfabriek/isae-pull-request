@@ -41,13 +41,16 @@ async function run() {
         }
 
         if (errors.length > 0) {
+            core.info('Validation failed');
             if (false === reviewExists) {
+                core.info('Creating new review to request changes');
                 await octokit.pulls.createReview({
                     ...octokitPullsPayload,
                     body: errors.join('\n'),
                     event: 'REQUEST_CHANGES'
                 });
             } else {
+                core.info('Creating new comment to keep requesting changes');
                 await octokit.pulls.createReview({
                     ...octokitPullsPayload,
                     body: errors.join('\n'),
@@ -55,9 +58,12 @@ async function run() {
                 });
             }
         } else {
+            core.info('Validation succeeded');
+
             if (reviewExists) {
                 for (const review of reviews.data) {
-                    if (review.state !== 'DISMISSED') {
+                    if (review.state !== 'DISMISSED' && review.user.login === 'github-actions[bot]') {
+                        core.info('Dismissing own review');
                         await octokit.pulls.dismissReview({
                             ...octokitPullsPayload,
                             review_id: review.id,
@@ -67,7 +73,6 @@ async function run() {
                 }
             }
         }
-
     } catch (error) {
         core.setFailed(error.message);
     }
@@ -5873,7 +5878,7 @@ module.exports = eval("require")("encoding");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("assert");
+module.exports = require("assert");;
 
 /***/ }),
 
@@ -5881,7 +5886,7 @@ module.exports = require("assert");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("events");
+module.exports = require("events");;
 
 /***/ }),
 
@@ -5889,7 +5894,7 @@ module.exports = require("events");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("fs");
+module.exports = require("fs");;
 
 /***/ }),
 
@@ -5897,7 +5902,7 @@ module.exports = require("fs");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("http");
+module.exports = require("http");;
 
 /***/ }),
 
@@ -5905,7 +5910,7 @@ module.exports = require("http");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("https");
+module.exports = require("https");;
 
 /***/ }),
 
@@ -5913,7 +5918,7 @@ module.exports = require("https");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("net");
+module.exports = require("net");;
 
 /***/ }),
 
@@ -5921,7 +5926,7 @@ module.exports = require("net");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("os");
+module.exports = require("os");;
 
 /***/ }),
 
@@ -5929,7 +5934,7 @@ module.exports = require("os");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("path");
+module.exports = require("path");;
 
 /***/ }),
 
@@ -5937,7 +5942,7 @@ module.exports = require("path");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("stream");
+module.exports = require("stream");;
 
 /***/ }),
 
@@ -5945,7 +5950,7 @@ module.exports = require("stream");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("tls");
+module.exports = require("tls");;
 
 /***/ }),
 
@@ -5953,7 +5958,7 @@ module.exports = require("tls");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("url");
+module.exports = require("url");;
 
 /***/ }),
 
@@ -5961,7 +5966,7 @@ module.exports = require("url");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("util");
+module.exports = require("util");;
 
 /***/ }),
 
@@ -5969,7 +5974,7 @@ module.exports = require("util");
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("zlib");
+module.exports = require("zlib");;
 
 /***/ })
 
