@@ -63,13 +63,10 @@ async function run() {
             for (const ticket of tickets) {
                 const issuePromise = jira.issue.getIssue({issueKey: ticket})
                     .then(response => {
-                        core.info(response);
+                        core.info(JSON.stringify(response));
                         return 'issue found';
                     })
-                    .catch(responseString => {
-                        core.info(responseString);
-                        return JSON.parse(responseString).statusCode === 404 ? 'issue not found' : responseString;
-                    });
+                    .catch(responseString => JSON.parse(responseString).statusCode === 404 ? 'issue not found' : responseString);
                 const issueFetchResult = await issuePromise;
 
                 switch (issueFetchResult) {
@@ -118,7 +115,7 @@ async function run() {
 
             if (reviewExists) {
                 for (const review of reviews.data) {
-                    if (review.state !== 'DISMISSED' && review.user.login === 'github-actions[bot]') {
+                    if (review.state === 'REQUEST_CHANGES' && review.user.login === 'github-actions[bot]') {
                         core.info('Dismissing own review');
                         await octokit.pulls.dismissReview({
                             ...octokitPullsPayload,
