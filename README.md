@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Pull Request Linter
         # Alternatively instead of a tag, you can use a branch name
-        uses: Mobiliteitsfabriek/isae-pull-request@v1
+        uses: Mobiliteitsfabriek/isae-pull-request@v1.0.0
         with:
           # Github token with access to the repository (secrets.GITHUB_TOKEN).
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -49,4 +49,5 @@ jobs:
 Run `bin/build` to build the changes into the dist folder. This folder is committed to the repository and read by
 Github when running this action.
 
-Furthermore, run `bin/git-tag` to create a tag on the `main` branch.
+Create a pull request to main branch with the appropriate semver label added: `major`, `minor` or `patch`.
+When the pull request is merged, it will automatically create a new release
