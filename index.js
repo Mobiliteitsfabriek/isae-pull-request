@@ -1,9 +1,10 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const jiraApiConnector = require('jira-connector');
 
 const config = {
-    pullRequestTitleRegex: /^\[?(mofab|io)-\d+\]?/i,
-    branchNameRegex: /^[^\/]+\/(mofab|io)-\d+-/i
+    pullRequestTitleRegex: /^\[?((mofab|io)-\d+)\]?/i,
+    branchNameRegex: /^[^\/]+\/((mofab|io)-\d+)-/i
 };
 
 // most @actions toolkit packages have async methods
@@ -19,12 +20,64 @@ async function run() {
         const octokit = github.getOctokit(core.getInput('repo-token', {required: true}));
         const errors = [];
 
+        const validateTitleMatchesWithBranch = core.getInput('title-must-match-branch').toLowerCase() === 'true';
+        const validateWithJira = core.getInput('validate-with-jira').toLowerCase() === 'true';
+
+        core.info(`title-must-match-branch: ${core.getInput('title-must-match-branch')}`);
+        core.info(`validate-with-jira: ${core.getInput('validate-with-jira')}`);
+
         if (false === config.pullRequestTitleRegex.test(pull_request.title)) {
             errors.push('* Title does not seem to contain reference to JIRA ticket');
         }
 
         if (false === config.branchNameRegex.test(pull_request.head.ref)) {
-            errors.push('* Branch name does not seem to contain reference to JIRA ticket (expected ^[^/]+/(MOFAB|IO)-\d+-.*$)');
+            errors.push(`* Branch name does not seem to contain reference to JIRA ticket (expected ${config.branchNameRegex.toString()}`);
+        }
+
+        if (true === validateTitleMatchesWithBranch && errors.length === 0) {
+            const branchTicket = config.branchNameRegex.exec(pull_request.head.ref)[1];
+            const titleTicket = config.pullRequestTitleRegex.exec(pull_request.title)[1];
+
+            if (branchTicket !== titleTicket) {
+                errors.push('* JIRA ticket reference in title does not match with JIRA ticket in branch');
+            }
+        }
+
+        if (true === validateWithJira && errors.length === 0) {
+            const jira = createJira();
+            const branchTicket = config.branchNameRegex.exec(pull_request.head.ref)[1];
+            const titleTicket = config.pullRequestTitleRegex.exec(pull_request.title)[1];
+
+            const tickets = [branchTicket];
+            if (branchTicket !== titleTicket) {
+                tickets.push(titleTicket);
+            }
+
+            for (const ticket of tickets) {
+                const issuePromise = jira.issue.getIssue({issueKey: ticket})
+                    .then(response => {
+                        core.info(response);
+                        return 'issue found';
+                    })
+                    .catch(responseString => {
+                        core.info(responseString);
+                        return JSON.parse(responseString).statusCode === 404 ? 'issue not found' : responseString;
+                    });
+                const issueFetchResult = await issuePromise;
+
+                switch (issueFetchResult) {
+                    case 'issue found':
+                        core.info(`Found issue ${ticket} in JIRA`);
+                        break;
+                    case 'issue not found':
+                        core.info(`Did not find issue ${ticket} in JIRA`);
+                        errors.push(`* JIRA ticket reference ${ticket} not found in JIRA`);
+                        break;
+
+                    default:
+                        throw new Error(issueFetchResult);
+                }
+            }
         }
 
         const reviews = await octokit.pulls.listReviews(octokitPullsPayload);
@@ -35,8 +88,10 @@ async function run() {
 
         if (errors.length > 0) {
             core.info('Validation failed');
+
             if (false === reviewExists) {
                 core.info('Creating new review to request changes');
+
                 await octokit.pulls.createReview({
                     ...octokitPullsPayload,
                     body: errors.join('\n'),
@@ -44,6 +99,7 @@ async function run() {
                 });
             } else {
                 core.info('Creating new comment to keep requesting changes');
+
                 await octokit.pulls.createReview({
                     ...octokitPullsPayload,
                     body: errors.join('\n'),
@@ -69,6 +125,22 @@ async function run() {
     } catch (error) {
         core.setFailed(error.message);
     }
+}
+
+function createJira() {
+    const host = core.getInput('jira-url', {required: true});
+    const email = core.getInput('jira-auth-email', {required: true});
+    const token = core.getInput('jira-auth-token', {required: true});
+
+    const config = {
+        host: host,
+        basic_auth: {
+            email: email,
+            api_token: token
+        }
+    };
+
+    return new jiraApiConnector(config);
 }
 
 run();
