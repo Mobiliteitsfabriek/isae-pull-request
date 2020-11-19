@@ -22,16 +22,17 @@ async function run() {
 
         const validateTitleMatchesWithBranch = core.getInput('title-must-match-branch').toLowerCase() === 'true';
         const validateWithJira = core.getInput('validate-with-jira').toLowerCase() === 'true';
+        const validateJiraStatusCategoryDone = core.getInput('validate-jira-status-not-done').toLowerCase() === 'true';
 
         core.info(`title-must-match-branch: ${core.getInput('title-must-match-branch')}`);
         core.info(`validate-with-jira: ${core.getInput('validate-with-jira')}`);
 
         if (false === config.pullRequestTitleRegex.test(pull_request.title)) {
-            errors.push('* Title does not seem to contain reference to JIRA ticket');
+            errors.push(`* Title does not seem to contain reference to JIRA ticket (expected ${config.pullRequestTitleRegex.toString()})`);
         }
 
         if (false === config.branchNameRegex.test(pull_request.head.ref)) {
-            errors.push(`* Branch name does not seem to contain reference to JIRA ticket (expected ${config.branchNameRegex.toString()}`);
+            errors.push(`* Branch name does not seem to contain reference to JIRA ticket (expected ${config.branchNameRegex.toString()})`);
         }
 
         if (true === validateTitleMatchesWithBranch && errors.length === 0) {
@@ -55,14 +56,21 @@ async function run() {
 
             for (const ticket of tickets) {
                 const issuePromise = jira.issue.getIssue({issueKey: ticket})
-                    .then(response => {
-                        core.info(JSON.stringify(response));
-                        return 'issue found';
+                    .then(({fields: {status: {statusCategory: {key}}}}) => {
+                        return key !== 'done' ? 'issue found' : 'issue found but already done';
                     })
                     .catch(responseString => JSON.parse(responseString).statusCode === 404 ? 'issue not found' : responseString);
                 const issueFetchResult = await issuePromise;
 
                 switch (issueFetchResult) {
+                    case 'issue found but already done':
+                        if (true === validateJiraStatusCategoryDone) {
+                            core.info(`Found issue ${ticket} in JIRA, but status category is 'done'`);
+                            errors.push(`* JIRA ticket reference ${ticket} in JIRA has status category 'done'`);
+                            break;
+                        }
+                        core.info('Skipping validation of status category');
+                        // fallthrough to 'íssue found'
                     case 'issue found':
                         core.info(`Found issue ${ticket} in JIRA`);
                         break;

@@ -18,6 +18,11 @@ inputs:
       'Validate JIRA ticket numbers with JIRA. Enable by setting this to "true".'
     required: false
     default: "false"
+  validate-jira-status-not-done:
+    description:
+      'Validate that JIRA ticket status category is not "done". Enable by setting this to "true".'
+    required: false
+    default: "false"
   jira-url:
     description:
       'JIRA URL to connect to. Required if validate-with-jira is true.'
