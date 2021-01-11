@@ -74,6 +74,7 @@ async function run() {
                     case 'issue found':
                         core.info(`Found issue ${ticket} in JIRA`);
                         break;
+
                     case 'issue not found':
                         core.info(`Did not find issue ${ticket} in JIRA`);
                         errors.push(`* JIRA ticket reference ${ticket} not found in JIRA`);
@@ -87,8 +88,13 @@ async function run() {
 
         const reviews = await octokit.pulls.listReviews(octokitPullsPayload);
         let reviewExists = false;
+
         for (const review of reviews.data) {
             reviewExists = reviewExists || review.user.login === 'github-actions[bot]';
+        }
+
+        if (reviewExists) {
+            core.info('There is an existing review by this bot on this PR');
         }
 
         if (errors.length > 0) {
