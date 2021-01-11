@@ -56,8 +56,8 @@ async function run() {
 
             for (const ticket of tickets) {
                 const issuePromise = jira.issue.getIssue({issueKey: ticket})
-                    .then(({fields: {status: {statusCategory: {key}}}}) => {
-                        return key !== 'done' ? 'issue found' : 'issue found but already done';
+                    .then(({fields: {status: {name}}}) => {
+                        return name.toLowerCase() !== 'done' ? 'issue found' : 'issue found but already done';
                     })
                     .catch(responseString => JSON.parse(responseString).statusCode === 404 ? 'issue not found' : responseString);
                 const issueFetchResult = await issuePromise;
