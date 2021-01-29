@@ -90,7 +90,14 @@ async function run() {
         let reviewExists = false;
 
         for (const review of reviews.data) {
-            reviewExists = reviewExists || review.user.login === 'github-actions[bot]';
+            if (review.user.login !== 'github-actions[bot]') {
+                continue;
+            }
+
+            if (review.state === 'CHANGES_REQUESTED') {
+                reviewExists = true;
+                break;
+            }
         }
 
         if (reviewExists) {
@@ -122,7 +129,6 @@ async function run() {
 
             if (reviewExists) {
                 for (const review of reviews.data) {
-                    core.info(`review state: ${review.state}, review user: ${review.user.login}`);
                     if (review.state === 'CHANGES_REQUESTED' && review.user.login === 'github-actions[bot]') {
                         core.info('Dismissing own review');
                         await octokit.pulls.dismissReview({

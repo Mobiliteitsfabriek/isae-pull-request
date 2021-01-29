@@ -97,7 +97,14 @@ async function run() {
         let reviewExists = false;
 
         for (const review of reviews.data) {
-            reviewExists = reviewExists || review.user.login === 'github-actions[bot]';
+            if (review.user.login !== 'github-actions[bot]') {
+                continue;
+            }
+
+            if (review.state === 'CHANGES_REQUESTED') {
+                reviewExists = true;
+                break;
+            }
         }
 
         if (reviewExists) {
