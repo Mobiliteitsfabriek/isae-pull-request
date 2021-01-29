@@ -6,5 +6,32 @@ runs:
 inputs:
   repo-token:
     description:
-      "Github token with access to the repository (secrets.GITHUB_TOKEN)."
+      'Github token with access to the repository (secrets.GITHUB_TOKEN).'
     required: true
+  title-must-match-branch:
+    description:
+      'Validate that ticket reference in branch matches ticket reference in PR title. Enable by setting this to "true".'
+    required: false
+    default: "false"
+  validate-with-jira:
+    description:
+      'Validate JIRA ticket numbers with JIRA. Enable by setting this to "true".'
+    required: false
+    default: "false"
+  validate-jira-status-not-done:
+    description:
+      'Validate that JIRA ticket status category is not "done". Enable by setting this to "true".'
+    required: false
+    default: "false"
+  jira-url:
+    description:
+      'JIRA URL to connect to. Required if validate-with-jira is true.'
+    required: false
+  jira-auth-email:
+    description:
+      'JIRA user email address for authentication. Required if validate-with-jira is true.'
+    required: false
+  jira-auth-token:
+    description:
+      'JIRA authentication token for email address in jira-auth-email. Required if validate-with-jira is true.'
+    required: false
