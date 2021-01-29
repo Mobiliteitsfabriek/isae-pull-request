@@ -63,8 +63,8 @@ async function run() {
 
             for (const ticket of tickets) {
                 const issuePromise = jira.issue.getIssue({issueKey: ticket})
-                    .then(({fields: {status: {statusCategory: {key}}}}) => {
-                        return key !== 'done' ? 'issue found' : 'issue found but already done';
+                    .then(({fields: {status: {name}}}) => {
+                        return name.toLowerCase() !== 'done' ? 'issue found' : 'issue found but already done';
                     })
                     .catch(responseString => JSON.parse(responseString).statusCode === 404 ? 'issue not found' : responseString);
                 const issueFetchResult = await issuePromise;
@@ -81,6 +81,7 @@ async function run() {
                     case 'issue found':
                         core.info(`Found issue ${ticket} in JIRA`);
                         break;
+
                     case 'issue not found':
                         core.info(`Did not find issue ${ticket} in JIRA`);
                         errors.push(`* JIRA ticket reference ${ticket} not found in JIRA`);
@@ -94,8 +95,13 @@ async function run() {
 
         const reviews = await octokit.pulls.listReviews(octokitPullsPayload);
         let reviewExists = false;
+
         for (const review of reviews.data) {
             reviewExists = reviewExists || review.user.login === 'github-actions[bot]';
+        }
+
+        if (reviewExists) {
+            core.info('There is an existing review by this bot on this PR');
         }
 
         if (errors.length > 0) {
