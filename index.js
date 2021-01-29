@@ -122,6 +122,7 @@ async function run() {
 
             if (reviewExists) {
                 for (const review of reviews.data) {
+                    core.info(`review state: ${review.state}, review user: ${review.user.login}`);
                     if (review.state === 'REQUEST_CHANGES' && review.user.login === 'github-actions[bot]') {
                         core.info('Dismissing own review');
                         await octokit.pulls.dismissReview({
