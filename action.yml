@@ -35,3 +35,8 @@ inputs:
     description:
       'JIRA authentication token for email address in jira-auth-email. Required if validate-with-jira is true.'
     required: false
+  skip-users:
+    description:
+      'Skip validation for these users, multiline string, 1 github username per line'
+    required: false
+    default: ''

@@ -27,6 +27,16 @@ async function run() {
         const octokit = github.getOctokit(core.getInput('repo-token', {required: true}));
         const errors = [];
 
+        const pullRequestAuthor = pull_request.user.login;
+        const usersToSkip = core.getInput('skip-users').split('\n');
+
+        for (const userToSkip of usersToSkip) {
+            if (pullRequestAuthor === usersToSkip) {
+                core.info(`Pull request author ${pullRequestAuthor} is designated to be skipped`);
+                return;
+            }
+        }
+
         const validateTitleMatchesWithBranch = core.getInput('title-must-match-branch').toLowerCase() === 'true';
         const validateWithJira = core.getInput('validate-with-jira').toLowerCase() === 'true';
         const validateJiraStatusCategoryDone = core.getInput('validate-jira-status-not-done').toLowerCase() === 'true';

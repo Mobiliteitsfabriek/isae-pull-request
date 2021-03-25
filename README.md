@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Pull Request Linter
         # Alternatively instead of a tag, you can use a branch name
-        uses: Mobiliteitsfabriek/isae-pull-request@v1.1.0
+        uses: Mobiliteitsfabriek/isae-pull-request@v1.2.0
         with:
           # Github token with access to the repository (secrets.GITHUB_TOKEN). Always required
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -54,6 +54,10 @@ jobs:
           jira-auth-email: ian.zunderdorp@mobiliteitsfabriek.nl
           # Authentication API token of above email address. Required if validate-with-jira is enabled. Use secret!
           jira-auth-token: ${{ secrets.JIRA_AUTH_TOKEN_IANZ }}
+          # Ignore pull requests from automated sources
+          skip-users: |
+            dependabot
+            dependabot-preview
 ```
 
 ## Deploying changes to this action
