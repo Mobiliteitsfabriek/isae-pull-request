@@ -34,7 +34,7 @@ async function run() {
         core.info('PR author: ' + pullRequestAuthor);
         for (const userToSkip of usersToSkip) {
             core.info('Testing against ' + userToSkip);
-            if (pullRequestAuthor === usersToSkip) {
+            if (pullRequestAuthor.toString().trim() === usersToSkip.toString().trim()) {
                 core.info(`Pull request author ${pullRequestAuthor} is designated to be skipped`);
                 return;
             }
