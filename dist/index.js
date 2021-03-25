@@ -30,6 +30,8 @@ async function run() {
         const pullRequestAuthor = pull_request.user.login;
         const usersToSkip = core.getInput('skip-users').split('\n');
 
+        core.info(JSON.stringify(usersToSkip));
+        core.info(pullRequestAuthor);
         for (const userToSkip of usersToSkip) {
             if (pullRequestAuthor === usersToSkip) {
                 core.info(`Pull request author ${pullRequestAuthor} is designated to be skipped`);
