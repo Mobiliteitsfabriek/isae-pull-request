@@ -33,6 +33,7 @@ async function run() {
         core.info('users to skip: ' + JSON.stringify(usersToSkip));
         core.info('PR author: ' + pullRequestAuthor);
         for (const userToSkip of usersToSkip) {
+            core.info('Testing against ' + userToSkip);
             if (pullRequestAuthor === usersToSkip) {
                 core.info(`Pull request author ${pullRequestAuthor} is designated to be skipped`);
                 return;
