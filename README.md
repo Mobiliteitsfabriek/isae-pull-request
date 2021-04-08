@@ -37,8 +37,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Pull Request Linter
-        # Alternatively instead of a tag, you can use a branch name
-        uses: Mobiliteitsfabriek/isae-pull-request@v1.2.0
+        # There are two tag styles available: Specific semver version or major version only.
+        # Recommended is the major version only, since that automatically updates when new versions for that major is released.
+        # Alternatively instead of a tag, you can use a branch name.
+        
+        uses: Mobiliteitsfabriek/isae-pull-request@v1
+        # uses: Mobiliteitsfabriek/isae-pull-request@v1.2.0
+        # uses: Mobiliteitsfabriek/isae-pull-request@main
         with:
           # Github token with access to the repository (secrets.GITHUB_TOKEN). Always required
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -66,4 +71,5 @@ Run `bin/build` to build the changes into the dist folder. This folder is commit
 Github when running this action.
 
 Create a pull request to main branch with the appropriate semver label added: `major`, `minor` or `patch`.
-When the pull request is merged, it will automatically create a new release
+When the pull request is merged, it will automatically create a new release with both a semver version
+plus create or update an appropriate major tag to point to the latest version of that major

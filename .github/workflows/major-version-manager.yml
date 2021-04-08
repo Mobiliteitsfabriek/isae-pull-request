@@ -1,0 +1,13 @@
+name: Keep the major version tag up to date
+
+on:
+  release:
+    types: [published, edited, created]
+
+jobs:
+  actions-tagger:
+    runs-on: windows-latest
+    steps:
+      - uses: Actions-R-Us/actions-tagger@v2
+        with:
+          publish_latest_tag: true
