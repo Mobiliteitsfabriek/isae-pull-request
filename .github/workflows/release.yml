@@ -7,7 +7,7 @@ on:
       - closed
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Tag
@@ -15,4 +15,4 @@ jobs:
         with:
           release_branch: main
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_GITHUB_TOKEN_IANZ }}
