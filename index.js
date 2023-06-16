@@ -3,8 +3,8 @@ const github = require('@actions/github');
 const jiraApiConnector = require('jira-connector');
 
 const config = {
-    pullRequestTitleRegex: /^\[?((mofab|io)-\d+)\]?/i,
-    branchNameRegex: /^[^\/]+\/((mofab|io)-\d+)-/i
+    pullRequestTitleRegex: /^\[?((mofab|io|tx)-\d+)]?/i,
+    branchNameRegex: /^[^\/]+\/((mofab|io|tx)-\d+)-/i
 };
 
 // most @actions toolkit packages have async methods
