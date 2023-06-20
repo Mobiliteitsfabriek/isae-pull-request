@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-command="docker compose run --rm isae-pr-review"
+command="docker-compose run --rm isae-pr-review"
 
 if [[ $1 ]]; then
   case $1 in
@@ -13,9 +13,6 @@ if [[ $1 ]]; then
   echo "Unknown option";
   exit 1;
 fi
-
-# Fixes issue where npm throws an error due to an old OpenSSL dependency
-export NODE_OPTIONS=--openssl-legacy-provider
 
 $command npm install
 $command npm run prepare
