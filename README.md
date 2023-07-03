@@ -73,3 +73,4 @@ Github when running this action.
 Create a pull request to main branch with the appropriate semver label added: `major`, `minor` or `patch`.
 When the pull request is merged, it will automatically create a new release with both a semver version
 plus create or update an appropriate major tag to point to the latest version of that major
+
