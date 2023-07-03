@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:16-alpine
 
 # Require arguments about the user/group this container uses
 ARG CTN_UID
