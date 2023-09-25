@@ -1,7 +1,7 @@
 name: 'isae-pr-review'
 description: 'Review if PR adheres to ISAE standards'
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
 inputs:
   repo-token:
