@@ -71863,8 +71863,8 @@ const github = __nccwpck_require__(5438);
 const jiraApiConnector = __nccwpck_require__(9252);
 
 const config = {
-    pullRequestTitleRegex: /^\[?((mofab|io|tx|prov)-\d+)]?/i,
-    branchNameRegex: /^[^\/]+\/((mofab|io|tx|prov)-\d+)-/i
+    pullRequestTitleRegex: /^\[?((mofab|io|tx|prov|nx)-\d+)]?/i,
+    branchNameRegex: /^[^\/]+\/((mofab|io|tx|prov|nx)-\d+)-/i
 };
 
 // most @actions toolkit packages have async methods
